@@ -129,12 +129,3 @@ dmypy.json
 .pyre/
 
 
-
-
-
-
-
-
-# Custom ignores
-# Contains sensitive keys
-variables.py
