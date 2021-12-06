@@ -19,12 +19,17 @@ class API:
     __secret = None
     __ID = None
     __token = ''
+    __refreshToken = ''
     __timeStamp = ''
+
+
+    def __init__(self, ID, secret):
+        self.__ID = ID
+        self.__secret = secret
 
     @staticmethod 
     def timestamp():
         t = str(int(time.time()*1000))
-        print(t)
         return t
 
 
@@ -46,16 +51,13 @@ class API:
             session = requests.Session()
             session.headers.update(headers)
             response = session.get(
-                self.baseurl + '/v1.0/token?grant_type=1', headers=headers)
-            print(response.text)
+                self.BASEURL + '/v1.0/token?grant_type=1', headers=headers)
             result = response.json()['result']
             self.__token = result['access_token']
-            variables.tuya_refresh_token = result['refresh_token']
+            self.__refreshToken = result['refresh_token']
             self.__timeStamp = t
-            print('1')
             return self.__token
         else:
-            print('3')
             return self.__token
 
 
@@ -70,7 +72,7 @@ class API:
             't': t,
             'sign_method': 'HMAC-SHA256',
         }
-        r = requests.get(self.baseurl + url, headers=dict(default_par, **headers))
+        r = requests.get(self.BASEURL + url, headers=dict(default_par, **headers))
 
         return r
 
@@ -85,7 +87,7 @@ class API:
             't': t,
             'sign_method': 'HMAC-SHA256',
         }
-        r = requests.post(self.baseurl + url, headers=dict(default_par,
+        r = requests.post(self.BASEURL + url, headers=dict(default_par,
                         **headers), data=json.dumps(body))
 
         # Beautify the format of request result.
