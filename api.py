@@ -8,17 +8,18 @@ import json
 import random
 import sys
 import colorsys
-import variables
 
 
 class API:
 
+     
 
-        
 
-
-    baseurl = 'https://openapi.tuyaus.com'
-
+    BASEURL = 'https://openapi.tuyaus.com'
+    __secret = None
+    __ID = None
+    __token = ''
+    __timeStamp = ''
 
     @staticmethod 
     def timestamp():
@@ -40,22 +41,22 @@ class API:
 
     def get_tuya_token(self, t):
 
-        if variables.tuya_token == '' or int(t) - int(variables.tuya_token_timestamp) > 70000:
-            headers = {'client_id': variables.tuya_id, 'sign': self.get_sign(variables.tuya_id + t, variables.tuya_secret), 'sign_method': 'HMAC-SHA256', 't': t, 'lang': 'en'}
+        if self.__token == '' or int(t) - int(self.__timeStamp) > 70000:
+            headers = {'client_id': self.__ID, 'sign': self.get_sign(self.__ID + t, self.__secret), 'sign_method': 'HMAC-SHA256', 't': t, 'lang': 'en'}
             session = requests.Session()
             session.headers.update(headers)
             response = session.get(
                 self.baseurl + '/v1.0/token?grant_type=1', headers=headers)
             print(response.text)
             result = response.json()['result']
-            variables.tuya_token = result['access_token']
+            self.__token = result['access_token']
             variables.tuya_refresh_token = result['refresh_token']
-            variables.tuya_token_timestamp = t
+            self.__timeStamp = t
             print('1')
-            return variables.tuya_token
+            return self.__token
         else:
             print('3')
-            return variables.tuya_token
+            return self.__token
 
 
     def GET(self, url, headers={}):
@@ -63,9 +64,9 @@ class API:
         t = self.timestamp()
 
         default_par = {
-            'client_id': variables.tuya_id,
+            'client_id': self.__ID,
             'access_token': self.get_tuya_token(t),
-            'sign': self.get_sign(variables.tuya_id+self.get_tuya_token(t)+t, variables.tuya_secret),
+            'sign': self.get_sign(self.__ID+self.get_tuya_token(t)+t, self.__secret),
             't': t,
             'sign_method': 'HMAC-SHA256',
         }
@@ -78,9 +79,9 @@ class API:
         t = self.timestamp()
 
         default_par = {
-            'client_id': variables.tuya_id,
+            'client_id': self.__ID,
             'access_token': self.get_tuya_token(t),
-            'sign': self.get_sign(variables.tuya_id+self.get_tuya_token(t)+t, variables.tuya_secret),
+            'sign': self.get_sign(self.__ID+self.get_tuya_token(t)+t, self.__secret),
             't': t,
             'sign_method': 'HMAC-SHA256',
         }
@@ -89,4 +90,4 @@ class API:
 
         # Beautify the format of request result.
         r = json.dumps(r.json(), indent=2, ensure_ascii=False)
-        return r    
+        return r
