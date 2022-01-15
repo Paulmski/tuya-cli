@@ -20,5 +20,16 @@ class Bulb(SmartDevice):
         r = self._api.POST(url='/v1.0/devices/' + self._id + '/commands', body=command)
         return r
 
+    def setWarmth(self, warmth):
+        command = {
+        "commands": [
+            {
+            "code": "temp_value_v2",
+            "value": warmth
+        }
+        ]
+    }
+        r = self._api.POST(url='/v1.0/devices/' + self._id + '/commands', body=command)
+        return r
     def getBrightness(self):
         return int(self.getStatus()['result'][2]['value'])
