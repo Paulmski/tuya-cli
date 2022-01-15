@@ -1,15 +1,13 @@
 
-from api import API
-class Bulb:
-    __api = None
-    __id = None
-
-    def __init__(self, id, apiID, secret): 
-        self.__id = id
-        self.__api = API(ID=apiID, secret=secret)
+from SmartDevice import SmartDevice
+class Bulb(SmartDevice):
+    pass
 
 
 
+
+    # Set the brightness of a standard bulb
+    # Brightness: The brightness value can be between 0-1000
     def setBrightness(self, brightness):
         command = {
         "commands": [
@@ -19,8 +17,8 @@ class Bulb:
         }
         ]
     }
-        self.__api.POST('/v1.0/devices/' + self.__id + '/commands', body=command)
+        r = self._api.POST(url='/v1.0/devices/' + self._id + '/commands', body=command)
+        return r
 
-
-
-
+    def getBrightness(self):
+        return int(self.getStatus()['result'][2]['value'])
