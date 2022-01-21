@@ -1,4 +1,4 @@
-# tuya-cli
+# tuyalib
 
 ## Goal of Project
 
