@@ -1,9 +1,21 @@
 
-from SmartDevice import SmartDevice
+from .SmartDevice import SmartDevice
 class Bulb(SmartDevice):
     pass
 
 
+    def switch(self, toggle: bool):
+        command = {
+        "commands": [
+            {
+            "code": "switch_led",
+            "value": toggle
+        }
+        ]
+    }
+
+        r = self._api.POST(url='/v1.0/devices/' + self._id + '/commands', body=command)
+        return r
 
 
     # Set the brightness of a standard bulb
@@ -55,3 +67,5 @@ class Bulb(SmartDevice):
         return int(self.getStatus()['result'][3]['value'])
     def getBrightness(self):
         return int(self.getStatus()['result'][2]['value'])
+    def isOn(self):
+       return bool(self.getStatus()['result'][0]['value']) 
